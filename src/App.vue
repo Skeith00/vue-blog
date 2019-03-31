@@ -1,16 +1,39 @@
 <template>
 <div>
   <!--Header-->
-  <fixHeader/>
-  <router-link to="/top">Go to TOP</router-link>
+  <fixheader/>
+  <!--<router-link to="/top">Go to TOP</router-link>-->
   <router-view id="app"/>
 </div>
 </template>
 
 <script>
-import fixHeader from './components/Header.vue'
+import Header from './components/Header.vue'
+import db from './config/firebaseConfig'
 
 export default {
+  name: 'home',
+  components: {
+    'fixheader': Header
+  },
+  mounted() {
+      db.collection('entries').get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        if (doc.exists) {
+            console.log("Document data:", doc.data());
+            this.items.push(doc.data())
+        } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+        }
+      })
+    })
+  },
+  data() {
+    return {
+      items: []
+    }
+  }
 }
 </script>
 
